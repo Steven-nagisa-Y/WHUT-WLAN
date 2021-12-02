@@ -1,5 +1,6 @@
 # coding:utf-8
 import logging
+import json
 import requests
 import base64
 import re
@@ -109,23 +110,28 @@ def logout(username, password):
 
 def heading():
     str = r"""
- _       ____  ____  ________  _       ____    ___    _   __
-| |     / / / / / / / /_  __/ | |     / / /   /   |  / | / /
-| | /| / / /_/ / / / / / /____| | /| / / /   / /| | /  |/ /
-| |/ |/ / __  / /_/ / / /_____/ |/ |/ / /___/ ___ |/ /|  /
-|__/|__/_/ /_/\____/ /_/      |__/|__/_____/_/  |_/_/ |_/
+ _       __  __  __  __  __  ______     _       __  __      ___      __    __
+| |     / / / / / / / / / / /_  __/    | |     / / / /     /   |    /  | /  /
+| | /| / / / /_/ / / / / /   / / _____ | | /| / / / /     / /| |   /   |/  /
+| |/ |/ / / __  / / /_/ /   / / /____/ | |/ |/ / / /___  /  _  |  /  /|   / 
+|__/|__/ /_/ /_/  \____/   /_/         |__/|__/ /_____/ /_/  |_| /__/ |__/
 """
     sys.stdout.write(BLUE + str + END + '\n')
 
 
 if __name__ == "__main__":
     heading()
-    args = sys.argv
-    username = args[1]
-    password = args[2]
+    user ={}
+    with open('user.json') as user_file:
+        user = json.load(user_file)
+    if "cardid" not in user:
+        raise ValueError("must write your cardid in user.json")
+    if "password" not in user:
+        raise ValueError("must write your password in user.json")
+    
     while True:
         try:
-            login_request(username, password)
+            login_request(user["cardid"], user["password"])
             break
         except:
             logging.exception("Connection refused by the server..")
